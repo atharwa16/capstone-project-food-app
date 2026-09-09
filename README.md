@@ -1,4 +1,4 @@
-# 🍔 BiteAI — Full-Stack Enterprise Food Platform & Real-Time Logistics System
+# 🍔 Capstone Food Delivery App
 
 [![React](https://img.shields.io/badge/React-18-blue.svg)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)](https://www.typescriptlang.org/)
@@ -8,7 +8,7 @@
 [![Socket.io](https://img.shields.io/badge/Socket.io-4.7-black.svg)](https://socket.io/)
 [![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-3.4-cyan.svg)](https://tailwindcss.com/)
 
-**BiteAI** is a production-style, end-to-end food-tech application featuring restaurant discovery, menu customization, real-time driver telemetry tracking, AI-powered nutritional image analysis, automated refund processing, and an interactive **Visual Operations & System Monitor** for platform administrators.
+**Capstone Food App** is a full-stack, enterprise-grade food delivery application featuring restaurant discovery, menu customization, real-time driver telemetry tracking, AI-powered nutritional image analysis, automated refund processing, and an interactive **Visual Operations & System Monitor** for platform administrators.
 
 ---
 
@@ -55,8 +55,8 @@
 
 1. **Clone the repository**:
    ```bash
-   git clone <repository-url>
-   cd atharwa
+   git clone https://github.com/atharwa16/capstone-project-food-app.git
+   cd capstone-project-food-app
    ```
 
 2. **Install dependencies**:
@@ -112,10 +112,10 @@ Quick login credentials pre-populated in the database for easy demonstration:
 
 ```bash
 # Build Docker Image
-docker build -t biteai-app .
+docker build -t capstone-food-app .
 
 # Run Docker Container
-docker run -p 5000:5000 -p 5173:5173 biteai-app
+docker run -p 5000:5000 -p 5173:5173 capstone-food-app
 ```
 
 ### Cloud Deployment (Render / Railway)
