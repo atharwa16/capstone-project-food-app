@@ -6,6 +6,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import clsx from 'clsx';
 
 export function MainLayout() {
+  const { user } = useAuth();
+
   return (
     <div className="flex flex-col min-h-screen bg-[#faf9f7]">
       <Header />
@@ -26,9 +28,11 @@ export function MainLayout() {
               <Link to="/restaurants" className="hover:text-red-500 transition-colors">Restaurants</Link>
               <Link to="/orders" className="hover:text-red-500 transition-colors">My Orders</Link>
               <Link to="/favorites" className="hover:text-red-500 transition-colors">Favorites</Link>
-              <Link to="/admin" className="text-amber-600 hover:text-amber-700 transition-colors flex items-center gap-1">
-                <ShieldAlert size={12} /> Admin Panel
-              </Link>
+              {user?.role === 'ADMIN' && (
+                <Link to="/admin" className="text-amber-600 hover:text-amber-700 transition-colors flex items-center gap-1">
+                  <ShieldAlert size={12} /> Admin Panel
+                </Link>
+              )}
             </div>
           </div>
         </div>

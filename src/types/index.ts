@@ -188,6 +188,7 @@ export interface Refund {
   updatedAt: string;
   resolvedAt?: string;
   adminNote?: string;
+  image?: string;
 }
 
 // ─── AI Analysis Types ───────────────────────────────────────────────────────

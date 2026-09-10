@@ -6,8 +6,8 @@ interface AuthContextValue {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (credentials: LoginCredentials) => Promise<void>;
-  signup: (data: SignupData) => Promise<void>;
+  login: (credentials: LoginCredentials) => Promise<User>;
+  signup: (data: SignupData) => Promise<User>;
   logout: () => void;
   updateUser: (updates: Partial<User>) => void;
 }
@@ -19,18 +19,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const stored = localStorage.getItem('biteai_user');
+    const stored = localStorage.getItem('biteai_user') || sessionStorage.getItem('biteai_user');
     if (stored) {
       try {
         setUser(JSON.parse(stored));
       } catch {
         localStorage.removeItem('biteai_user');
+        sessionStorage.removeItem('biteai_user');
       }
     }
     setIsLoading(false);
   }, []);
 
-  const login = async (credentials: LoginCredentials) => {
+  const login = async (credentials: LoginCredentials): Promise<User> => {
     const loggedInUser = await authService.login(credentials);
     setUser(loggedInUser);
     if (credentials.rememberMe) {
@@ -38,12 +39,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } else {
       sessionStorage.setItem('biteai_user', JSON.stringify(loggedInUser));
     }
+    return loggedInUser;
   };
 
-  const signup = async (data: SignupData) => {
+  const signup = async (data: SignupData): Promise<User> => {
     const newUser = await authService.signup(data);
     setUser(newUser);
     localStorage.setItem('biteai_user', JSON.stringify(newUser));
+    return newUser;
   };
 
   const logout = () => {

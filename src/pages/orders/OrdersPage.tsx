@@ -4,6 +4,7 @@ import { Package, ChevronRight, RotateCcw } from 'lucide-react';
 import { useOrders } from '@/contexts/OrdersContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRefunds } from '@/contexts/RefundsContext';
+import { useToast } from '@/contexts/ToastContext';
 import { Button } from '@/components/ui/Button';
 import { EmptyState, Badge } from '@/components/ui';
 import { RefundRequestModal } from '@/components/refund/RefundRequestModal';
@@ -62,7 +63,7 @@ export function OrdersPage() {
         />
       ) : (
         <div className="space-y-4">
-          {filteredOrders.map(order => <OrderCard key={order.id} order={order} getOrderRefund={getOrderRefund} onRequestRefund={setRefundOrderId} />)}
+          {filteredOrders.map(order => <OrderCard key={order.id} order={order} getOrderRefund={getOrderRefund} />)}
         </div>
       )}
 
@@ -77,14 +78,31 @@ export function OrdersPage() {
   );
 }
 
-function OrderCard({ order, getOrderRefund, onRequestRefund }: {
+function OrderCard({ order, getOrderRefund }: {
   order: Order;
   getOrderRefund: (orderId: string) => ReturnType<ReturnType<typeof useRefunds>['getOrderRefund']>;
-  onRequestRefund: (orderId: string) => void;
 }) {
+  const { updateOrderStatus } = useOrders();
+  const toast = useToast();
+  const [isCancelling, setIsCancelling] = useState(false);
+
   const existingRefund = getOrderRefund(order.id);
   const cfg = STATUS_CONFIG[order.status];
-  const canRefund = (order.status === 'DELIVERED' || order.status === 'CANCELLED') && !existingRefund;
+  const canCancel = order.status !== 'DELIVERED' && order.status !== 'CANCELLED';
+  const canRefund = order.status === 'DELIVERED' && !existingRefund;
+
+  const handleCancelOrder = async () => {
+    if (!window.confirm(`Are you sure you want to cancel Order #${order.id}?`)) return;
+    setIsCancelling(true);
+    try {
+      await updateOrderStatus(order.id, 'CANCELLED');
+      toast.success(`Order #${order.id} has been cancelled.`);
+    } catch {
+      toast.error('Failed to cancel order.');
+    } finally {
+      setIsCancelling(false);
+    }
+  };
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden p-5 space-y-4">
@@ -111,7 +129,7 @@ function OrderCard({ order, getOrderRefund, onRequestRefund }: {
       {/* Actions */}
       <div className="flex items-center justify-between gap-3 pt-1 flex-wrap">
         <div>
-          {order.status !== 'DELIVERED' && order.status !== 'CANCELLED' ? (
+          {canCancel ? (
             <Link
               to={`/order-tracking/${order.id}`}
               className="inline-flex items-center gap-1.5 bg-red-50 text-red-600 hover:bg-red-100 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors"
@@ -125,21 +143,33 @@ function OrderCard({ order, getOrderRefund, onRequestRefund }: {
         </div>
 
         <div className="flex items-center gap-2.5">
+          {canCancel && (
+            <button
+              onClick={handleCancelOrder}
+              disabled={isCancelling}
+              className="flex items-center gap-1 text-xs text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 px-3 py-1.5 rounded-xl font-bold transition-colors disabled:opacity-50"
+            >
+              <span>{isCancelling ? 'Cancelling...' : 'Cancel Order'}</span>
+            </button>
+          )}
+
           {existingRefund && (
             <Link to={`/refunds/${existingRefund.id}`} className="flex items-center gap-1 text-xs text-amber-600 font-bold hover:underline">
               <RotateCcw size={13} />
-              <span>Refund {existingRefund.status.replace('_', ' ').toLowerCase()}</span>
+              <span>Refund Ticket #{existingRefund.id} ({existingRefund.status})</span>
             </Link>
           )}
+
           {canRefund && (
-            <button
-              onClick={() => onRequestRefund(order.id)}
-              className="flex items-center gap-1 text-xs text-gray-500 hover:text-red-500 font-bold transition-colors"
+            <Link
+              to={`/request-refund/${order.id}`}
+              className="flex items-center gap-1 text-xs bg-red-50 text-red-600 hover:bg-red-100 px-3 py-1.5 rounded-xl font-bold transition-colors"
             >
               <RotateCcw size={13} />
               <span>Request Refund</span>
-            </button>
+            </Link>
           )}
+
           <Link to={`/restaurant/${order.restaurantId}`}>
             <Button variant="outline" size="sm" className="rounded-xl font-bold border-gray-200">
               Reorder

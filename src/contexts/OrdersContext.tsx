@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
+import { io } from 'socket.io-client';
 import type { Order, OrderStatus } from '@/types';
 import { sampleOrders } from '@/data/orders';
 import { useAuth } from './AuthContext';
@@ -34,6 +35,15 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     reloadOrders();
+
+    const socket = io('http://localhost:5000', { transports: ['websocket', 'polling'] });
+    socket.on('global_order_update', ({ orderId, status }: { orderId: string; status: OrderStatus }) => {
+      setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status, updatedAt: new Date().toISOString() } : o));
+    });
+
+    return () => {
+      socket.disconnect();
+    };
   }, [reloadOrders]);
 
   const getUserOrders = useCallback((userId: string) =>

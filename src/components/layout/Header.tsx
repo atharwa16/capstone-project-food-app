@@ -115,15 +115,17 @@ export function Header() {
 
           {/* Right section: Cart, Auth */}
           <div className="flex items-center gap-3">
-            {/* Admin Quick Link */}
-            <Link
-              to="/admin"
-              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-amber-700 bg-amber-50 hover:bg-amber-100 border border-amber-200 transition-all shadow-2xs"
-              title="Open BiteHub Admin Console"
-            >
-              <ShieldAlert size={14} className="text-amber-600" />
-              <span>Admin Panel</span>
-            </Link>
+            {/* Admin Quick Link - visible ONLY to Admin users */}
+            {isAuthenticated && user?.role === 'ADMIN' && (
+              <Link
+                to="/admin"
+                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-amber-700 bg-amber-50 hover:bg-amber-100 border border-amber-200 transition-all shadow-2xs"
+                title="Open BiteHub Admin Console"
+              >
+                <ShieldAlert size={14} className="text-amber-600" />
+                <span>Admin Panel</span>
+              </Link>
+            )}
 
             {/* Cart Button */}
             <Link
@@ -160,10 +162,12 @@ export function Header() {
                       <p className="font-bold text-sm text-gray-900 truncate">{user.name}</p>
                       <p className="text-xs text-gray-500 truncate">{user.email}</p>
                     </div>
-                    <Link to="/admin" onClick={() => setShowUserMenu(false)} className="flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-amber-600 hover:bg-amber-50 transition-colors">
-                      <ShieldAlert size={15} />
-                      {user.role === 'ADMIN' ? 'Admin Panel' : 'Switch to Admin Console'}
-                    </Link>
+                    {user.role === 'ADMIN' && (
+                      <Link to="/admin" onClick={() => setShowUserMenu(false)} className="flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-amber-600 hover:bg-amber-50 transition-colors border-b border-gray-100">
+                        <ShieldAlert size={15} />
+                        Admin Panel
+                      </Link>
+                    )}
                     <Link to="/profile" onClick={() => setShowUserMenu(false)} className="flex items-center gap-2.5 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
                       <User size={15} className="text-gray-400" />Profile Settings
                     </Link>

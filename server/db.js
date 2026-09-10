@@ -138,9 +138,16 @@ export async function initDb() {
       created_at TEXT NOT NULL,
       updated_at TEXT NOT NULL,
       resolved_at TEXT,
-      admin_note TEXT
+      admin_note TEXT,
+      image TEXT
     );
   `);
+
+  try {
+    await run('ALTER TABLE refunds ADD COLUMN image TEXT');
+  } catch {
+    // column already exists
+  }
 
   console.log('✅ Database tables verified.');
 

@@ -8,7 +8,7 @@ interface RefundsContextValue {
   getUserRefunds: (userId: string) => Refund[];
   getRefund: (refundId: string) => Refund | undefined;
   getOrderRefund: (orderId: string) => Refund | undefined;
-  createRefund: (orderId: string, userId: string, restaurantId: string, amount: number, reason: RefundReason, description: string) => Promise<Refund>;
+  createRefund: (orderId: string, userId: string, restaurantId: string, amount: number, reason: RefundReason, description: string, image?: string) => Promise<Refund>;
   updateRefundStatus: (refundId: string, status: RefundStatus, note?: string) => Promise<void>;
   allRefunds: Refund[];
   reloadRefunds: () => Promise<void>;
@@ -46,11 +46,11 @@ export function RefundsProvider({ children }: { children: ReactNode }) {
   const getOrderRefund = useCallback((orderId: string) =>
     refunds.find(r => r.orderId === orderId), [refunds]);
 
-  const createRefund = useCallback(async (orderId: string, userId: string, restaurantId: string, amount: number, reason: RefundReason, description: string): Promise<Refund> => {
+  const createRefund = useCallback(async (orderId: string, userId: string, restaurantId: string, amount: number, reason: RefundReason, description: string, image?: string): Promise<Refund> => {
     try {
       const created = await fetchApi<Refund>('/refunds', {
         method: 'POST',
-        body: JSON.stringify({ orderId, userId, restaurantId, amount, reason, description }),
+        body: JSON.stringify({ orderId, userId, restaurantId, amount, reason, description, image }),
       });
       setRefunds(prev => [created, ...prev]);
       return created;
@@ -58,7 +58,7 @@ export function RefundsProvider({ children }: { children: ReactNode }) {
       const now = new Date().toISOString();
       const localRefund: Refund = {
         id: `RF${String(localRefundCounter++).padStart(3, '0')}`,
-        orderId, userId, restaurantId, amount, reason, description,
+        orderId, userId, restaurantId, amount, reason, description, image,
         status: 'PENDING',
         timeline: [{ status: 'PENDING', date: now, note: 'Refund request submitted' }],
         createdAt: now,

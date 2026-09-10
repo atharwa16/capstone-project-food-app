@@ -21,6 +21,7 @@ export const orderSchema = z.object({
     name: z.string(),
     price: z.number().positive(),
     quantity: z.number().int().positive(),
+    image: z.string().optional(),
   })).min(1, 'Cart must contain at least 1 item.'),
   subtotal: z.number().nonnegative(),
   deliveryFee: z.number().nonnegative(),
@@ -31,7 +32,11 @@ export const orderSchema = z.object({
     street: z.string().min(1, 'Street address is required.'),
     city: z.string().min(1, 'City is required.'),
   }),
-});
+  paymentMethod: z.string().optional(),
+  status: z.string().optional(),
+  estimatedDelivery: z.string().optional(),
+  notes: z.string().optional(),
+}).passthrough();
 
 export const refundSchema = z.object({
   orderId: z.string().min(1, 'Order ID is required.'),

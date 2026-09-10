@@ -19,6 +19,7 @@ import { CheckoutPage } from '@/pages/checkout/CheckoutPage';
 import { OrderConfirmationPage, OrderTrackingPage } from '@/pages/orders/OrderPages';
 import { OrdersPage } from '@/pages/orders/OrdersPage';
 import { RefundsPage, RefundDetailPage } from '@/pages/refunds/RefundsPage';
+import { RequestRefundPage } from '@/pages/refunds/RequestRefundPage';
 import { FavoritesPage } from '@/pages/favorites/FavoritesPage';
 import { ProfilePage } from '@/pages/profile/ProfilePage';
 import {
@@ -51,8 +52,8 @@ export default function App() {
               <RefundsProvider>
                 <FavoritesProvider>
                   <Routes>
-                    {/* Main layout routes */}
-                    <Route element={<MainLayout />}>
+                    {/* Main layout routes - protected so unauthenticated users see login first */}
+                    <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
                       <Route index element={<HomePage />} />
                       <Route path="/restaurants" element={<RestaurantsPage />} />
                       <Route path="/search" element={<SearchPage />} />
@@ -60,14 +61,15 @@ export default function App() {
                       <Route path="/cart" element={<CartPage />} />
 
                       {/* Protected user routes */}
-                      <Route path="/checkout" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
-                      <Route path="/order-confirmation/:id" element={<ProtectedRoute><OrderConfirmationPage /></ProtectedRoute>} />
-                      <Route path="/order-tracking/:id" element={<ProtectedRoute><OrderTrackingPage /></ProtectedRoute>} />
-                      <Route path="/orders" element={<ProtectedRoute><OrdersPage /></ProtectedRoute>} />
-                      <Route path="/refunds" element={<ProtectedRoute><RefundsPage /></ProtectedRoute>} />
-                      <Route path="/refunds/:refundId" element={<ProtectedRoute><RefundDetailPage /></ProtectedRoute>} />
-                      <Route path="/favorites" element={<ProtectedRoute><FavoritesPage /></ProtectedRoute>} />
-                      <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+                      <Route path="/checkout" element={<CheckoutPage />} />
+                      <Route path="/order-confirmation/:id" element={<OrderConfirmationPage />} />
+                      <Route path="/order-tracking/:id" element={<OrderTrackingPage />} />
+                      <Route path="/orders" element={<OrdersPage />} />
+                      <Route path="/refunds" element={<RefundsPage />} />
+                      <Route path="/refunds/:refundId" element={<RefundDetailPage />} />
+                      <Route path="/request-refund/:orderId" element={<RequestRefundPage />} />
+                      <Route path="/favorites" element={<FavoritesPage />} />
+                      <Route path="/profile" element={<ProfilePage />} />
 
                       <Route path="*" element={<NotFoundPage />} />
                     </Route>

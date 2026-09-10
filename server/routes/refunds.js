@@ -1,5 +1,6 @@
 import express from 'express';
 import { query, getOne, run } from '../db.js';
+import { dispatchRefundToMlService } from '../services/mlWebhookService.js';
 
 const router = express.Router();
 
@@ -40,6 +41,7 @@ function formatRefund(row) {
     updatedAt: row.updated_at,
     resolvedAt: row.resolved_at,
     adminNote: row.admin_note,
+    image: row.image || null,
   };
 }
 
@@ -67,7 +69,7 @@ router.get('/', async (req, res) => {
 // ─── POST /api/refunds ─────────────────────────────────────────────────────────
 router.post('/', async (req, res) => {
   try {
-    const { orderId, userId, restaurantId, amount, reason, description } = req.body;
+    const { orderId, userId, restaurantId, amount, reason, description, image } = req.body;
     if (!orderId || !userId || !amount || !reason) {
       return res.status(400).json({ error: 'Missing required refund request fields.' });
     }
@@ -82,13 +84,31 @@ router.post('/', async (req, res) => {
     await run(
       `INSERT INTO refunds (
         id, order_id, user_id, restaurant_id, amount, reason, description,
-        status, timeline, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, 'PENDING', ?, ?, ?)`,
-      [id, orderId, userId, restaurantId || 'R001', amount, reason, description || '', JSON.stringify(initialTimeline), now, now]
+        status, timeline, created_at, updated_at, image
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, 'PENDING', ?, ?, ?, ?)`,
+      [id, orderId, userId, restaurantId || 'R001', amount, reason, description || '', JSON.stringify(initialTimeline), now, now, image || null]
     );
 
     const insertedRow = await getOne('SELECT * FROM refunds WHERE id = ?', [id]);
-    return res.status(201).json(formatRefund(insertedRow));
+    const formatted = formatRefund(insertedRow);
+
+    // Enrich with customer and restaurant info for ML dashboard
+    let customerName = 'Customer';
+    let customerEmail = 'customer@example.com';
+    let customerPhone = '+91 98765 43210';
+    try {
+      const userRow = await getOne('SELECT name, email, phone FROM users WHERE id = ?', [userId]);
+      if (userRow) {
+        customerName = userRow.name;
+        customerEmail = userRow.email;
+        customerPhone = userRow.phone || customerPhone;
+      }
+    } catch { /* non-fatal */ }
+
+    // Asynchronously dispatch webhook to independent ML service on port 8000
+    dispatchRefundToMlService({ ...formatted, customerName, customerEmail, customerPhone });
+
+    return res.status(201).json(formatted);
   } catch (err) {
     console.error('Create refund error:', err);
     return res.status(500).json({ error: 'Failed to create refund request' });

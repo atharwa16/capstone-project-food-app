@@ -755,8 +755,8 @@ export function AdminRefunds() {
 
       <div className="grid grid-cols-1 gap-4">
         {filteredRefunds.map(ref => (
-          <div key={ref.id} className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div className="space-y-2">
+          <div key={ref.id} className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm flex flex-col md:flex-row md:items-start justify-between gap-6">
+            <div className="space-y-3 flex-1">
               <div className="flex flex-wrap items-center gap-3">
                 <span className="font-extrabold text-gray-900 text-base">Ticket #{ref.id}</span>
                 <span className="text-xs font-bold text-gray-500 bg-gray-100 px-2.5 py-0.5 rounded-md">Order #{ref.orderId}</span>
@@ -768,13 +768,27 @@ export function AdminRefunds() {
                   {ref.status}
                 </span>
               </div>
-              <p className="text-xs font-extrabold text-red-600">Claimed Refund Amount: ₹{ref.amount}</p>
-              <p className="text-xs font-bold text-gray-800">Reason: {ref.reason.replace(/_/g, ' ')}</p>
-              <p className="text-xs text-gray-600 bg-gray-50 p-3 rounded-xl border border-gray-100 max-w-xl">"{ref.description}"</p>
+
+              <div className="flex flex-col sm:flex-row gap-4">
+                {ref.image && (
+                  <div className="flex-shrink-0">
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Customer Evidence Photo</p>
+                    <a href={ref.image} target="_blank" rel="noreferrer" title="Click to open full photo">
+                      <img src={ref.image} alt="Customer Evidence" className="w-28 h-28 object-cover rounded-xl border border-gray-200 shadow-2xs hover:opacity-90 transition-opacity" />
+                    </a>
+                  </div>
+                )}
+
+                <div className="space-y-1.5 flex-1">
+                  <p className="text-xs font-extrabold text-red-600">Claimed Refund Amount: ₹{ref.amount}</p>
+                  <p className="text-xs font-bold text-gray-800">Reason: {ref.reason.replace(/_/g, ' ')}</p>
+                  <p className="text-xs text-gray-600 bg-gray-50 p-3 rounded-xl border border-gray-100 max-w-xl">"{ref.description}"</p>
+                </div>
+              </div>
             </div>
 
             {(ref.status === 'PENDING' || ref.status === 'UNDER_REVIEW') && (
-              <div className="flex items-center gap-2 flex-shrink-0">
+              <div className="flex items-center gap-2 flex-shrink-0 self-center md:self-start">
                 <button
                   onClick={() => handleApprove(ref.id)}
                   className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition-all shadow-sm flex items-center gap-1.5 cursor-pointer"
