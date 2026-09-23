@@ -189,6 +189,10 @@ export interface Refund {
   resolvedAt?: string;
   adminNote?: string;
   image?: string;
+  mlVerdict?: 'REAL' | 'UNCERTAIN' | 'AI_GENERATED' | string;
+  mlConfidence?: number;
+  mlReason?: string;
+  mlManipulationProb?: string;
 }
 
 // ─── AI Analysis Types ───────────────────────────────────────────────────────

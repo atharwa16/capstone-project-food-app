@@ -506,6 +506,26 @@ async def receive_refund_webhook(request: Request):
         "prediction": prediction
     }
 
+# ─── POST /webhook/update-status (from BiteHub Backend) ──────────────────────
+@app.post("/webhook/update-status")
+async def webhook_update_status(request: Request):
+    try:
+        body = await request.json()
+        refund_id = body.get("refundId")
+        status_val = body.get("status")
+
+        if refund_id and status_val:
+            records = load_history()
+            for r in records:
+                if r.get("refundId") == refund_id:
+                    r["status"] = status_val
+                    break
+            save_history(records)
+            return {"status": "success", "refundId": refund_id, "newStatus": status_val}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+    return {"status": "ignored"}
+
 # ─── POST /api/sync-decision ─────────────────────────────────────────────────
 @app.post("/api/sync-decision")
 async def sync_decision(request: Request):

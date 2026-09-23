@@ -149,6 +149,19 @@ export async function initDb() {
     // column already exists
   }
 
+  for (const colSql of [
+    'ALTER TABLE refunds ADD COLUMN ml_verdict TEXT',
+    'ALTER TABLE refunds ADD COLUMN ml_confidence REAL',
+    'ALTER TABLE refunds ADD COLUMN ml_reason TEXT',
+    'ALTER TABLE refunds ADD COLUMN ml_manipulation_prob TEXT',
+  ]) {
+    try {
+      await run(colSql);
+    } catch {
+      // column already exists
+    }
+  }
+
   console.log('✅ Database tables verified.');
 
   // Seed default admin and initial users if users table is empty

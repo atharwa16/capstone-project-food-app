@@ -26,7 +26,50 @@ async function seedRefundsIfEmpty() {
   }
 }
 
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const ML_HISTORY_PATH = path.resolve(__dirname, '../../ml_service/ml_history.json');
+
+function getMlPredictionFromHistory(refundId) {
+  try {
+    if (fs.existsSync(ML_HISTORY_PATH)) {
+      const data = JSON.parse(fs.readFileSync(ML_HISTORY_PATH, 'utf8'));
+      const item = data.find(r => r.refundId === refundId);
+      if (item && item.prediction) {
+        return {
+          mlVerdict: item.prediction.label || null,
+          mlConfidence: item.prediction.confidence_score != null ? item.prediction.confidence_score : null,
+          mlReason: item.prediction.reason || null,
+          mlManipulationProb: item.prediction.texture_breakdown?.manipulation_probability || null,
+        };
+      }
+    }
+  } catch {
+    // ignore
+  }
+  return null;
+}
+
 function formatRefund(row) {
+  let mlVerdict = row.ml_verdict || null;
+  let mlConfidence = row.ml_confidence != null ? row.ml_confidence : null;
+  let mlReason = row.ml_reason || null;
+  let mlManipulationProb = row.ml_manipulation_prob || null;
+
+  if (!mlVerdict) {
+    const historyPred = getMlPredictionFromHistory(row.id);
+    if (historyPred) {
+      mlVerdict = historyPred.mlVerdict;
+      mlConfidence = historyPred.mlConfidence;
+      mlReason = historyPred.mlReason;
+      mlManipulationProb = historyPred.mlManipulationProb;
+    }
+  }
+
   return {
     id: row.id,
     orderId: row.order_id,
@@ -42,6 +85,10 @@ function formatRefund(row) {
     resolvedAt: row.resolved_at,
     adminNote: row.admin_note,
     image: row.image || null,
+    mlVerdict,
+    mlConfidence,
+    mlReason,
+    mlManipulationProb,
   };
 }
 
@@ -105,8 +152,22 @@ router.post('/', async (req, res) => {
       }
     } catch { /* non-fatal */ }
 
-    // Asynchronously dispatch webhook to independent ML service on port 8000
-    dispatchRefundToMlService({ ...formatted, customerName, customerEmail, customerPhone });
+    // Dispatch webhook to independent ML service on port 8000 and record prediction
+    try {
+      const mlRes = await dispatchRefundToMlService({ ...formatted, customerName, customerEmail, customerPhone });
+      if (mlRes && mlRes.prediction) {
+        const p = mlRes.prediction;
+        const manipProb = p.texture_breakdown?.manipulation_probability || null;
+        await run(
+          'UPDATE refunds SET ml_verdict = ?, ml_confidence = ?, ml_reason = ?, ml_manipulation_prob = ? WHERE id = ?',
+          [p.label, p.confidence_score, p.reason, manipProb, id]
+        );
+        formatted.mlVerdict = p.label;
+        formatted.mlConfidence = p.confidence_score;
+        formatted.mlReason = p.reason;
+        formatted.mlManipulationProb = manipProb;
+      }
+    } catch { /* non-fatal */ }
 
     return res.status(201).json(formatted);
   } catch (err) {
@@ -137,6 +198,17 @@ router.patch('/:id/status', async (req, res) => {
       'UPDATE refunds SET status = ?, timeline = ?, updated_at = ?, resolved_at = ?, admin_note = ? WHERE id = ?',
       [status, JSON.stringify(timeline), now, resolvedAt, note || null, req.params.id]
     );
+
+    // Sync status change to ML service if running
+    try {
+      fetch('http://localhost:8000/webhook/update-status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refundId: req.params.id, status }),
+      }).catch(() => {});
+    } catch {
+      // non-fatal
+    }
 
     const updatedRow = await getOne('SELECT * FROM refunds WHERE id = ?', [req.params.id]);
     return res.json(formatRefund(updatedRow));

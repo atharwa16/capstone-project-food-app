@@ -23,6 +23,8 @@ import {
   Clock,
   Building2,
   ShieldAlert,
+  ShieldCheck,
+  Sparkles,
   ExternalLink,
   Power
 } from 'lucide-react';
@@ -785,6 +787,82 @@ export function AdminRefunds() {
                   <p className="text-xs text-gray-600 bg-gray-50 p-3 rounded-xl border border-gray-100 max-w-xl">"{ref.description}"</p>
                 </div>
               </div>
+
+              {/* AI FoodForensics Image Verification Box */}
+              {ref.image && (
+                <div className={`mt-3 p-3.5 rounded-xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 ${
+                  ref.mlVerdict === 'REAL' 
+                    ? 'bg-emerald-50/80 border-emerald-200/80 text-emerald-950'
+                    : ref.mlVerdict === 'AI_GENERATED' || ref.mlVerdict === 'MANIPULATED'
+                    ? 'bg-rose-50/80 border-rose-200/80 text-rose-950'
+                    : 'bg-amber-50/80 border-amber-200/80 text-amber-950'
+                }`}>
+                  <div className="flex items-start gap-2.5">
+                    <div className={`mt-0.5 p-1.5 rounded-lg flex-shrink-0 ${
+                      ref.mlVerdict === 'REAL' 
+                        ? 'bg-emerald-600 text-white' 
+                        : ref.mlVerdict === 'AI_GENERATED' || ref.mlVerdict === 'MANIPULATED'
+                        ? 'bg-rose-600 text-white' 
+                        : 'bg-amber-600 text-white'
+                    }`}>
+                      {ref.mlVerdict === 'REAL' ? (
+                        <ShieldCheck size={16} />
+                      ) : ref.mlVerdict === 'AI_GENERATED' || ref.mlVerdict === 'MANIPULATED' ? (
+                        <ShieldAlert size={16} />
+                      ) : (
+                        <AlertCircle size={16} />
+                      )}
+                    </div>
+                    <div>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="text-xs font-black uppercase tracking-wider">
+                          AI Model Verdict: {ref.mlVerdict === 'REAL' ? 'Authentic Photo (Real Food)' : ref.mlVerdict === 'AI_GENERATED' || ref.mlVerdict === 'MANIPULATED' ? 'Flagged / Tampered Media' : 'Uncertain (Audit Needed)'}
+                        </span>
+                        {ref.mlConfidence != null && (
+                          <span className={`text-[11px] font-extrabold px-2 py-0.5 rounded-md ${
+                            ref.mlVerdict === 'REAL' 
+                              ? 'bg-emerald-200/80 text-emerald-900' 
+                              : ref.mlVerdict === 'AI_GENERATED' || ref.mlVerdict === 'MANIPULATED'
+                              ? 'bg-rose-200/80 text-rose-900' 
+                              : 'bg-amber-200/80 text-amber-900'
+                          }`}>
+                            {(ref.mlConfidence * 100).toFixed(1)}% Confidence
+                          </span>
+                        )}
+                        {ref.mlManipulationProb && (
+                          <span className="text-[11px] font-mono text-gray-500 hidden sm:inline">
+                            (Manipulation: {ref.mlManipulationProb})
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[11px] font-medium text-gray-600 mt-1 line-clamp-2">
+                        {ref.mlReason || 'EfficientNetV2-S ONNX model processed this evidence against synthetic artifacts and photo tamper signatures.'}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 self-end sm:self-center flex-shrink-0">
+                    <span className={`text-[10px] font-black uppercase px-2.5 py-1 rounded-md border ${
+                      ref.mlVerdict === 'REAL'
+                        ? 'bg-emerald-100 border-emerald-300 text-emerald-800'
+                        : ref.mlVerdict === 'AI_GENERATED' || ref.mlVerdict === 'MANIPULATED'
+                        ? 'bg-rose-100 border-rose-300 text-rose-800'
+                        : 'bg-amber-100 border-amber-300 text-amber-800'
+                    }`}>
+                      {ref.mlVerdict === 'REAL' ? 'AI Suggestion: Safe to Approve' : ref.mlVerdict === 'AI_GENERATED' || ref.mlVerdict === 'MANIPULATED' ? 'AI Suggestion: Reject Fraud' : 'AI Suggestion: Manual Audit'}
+                    </span>
+                    <a
+                      href="http://localhost:8000/dashboard"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 underline hover:no-underline"
+                      title="Open full Media Audit Console"
+                    >
+                      Audit Console <ExternalLink size={11} />
+                    </a>
+                  </div>
+                </div>
+              )}
             </div>
 
             {(ref.status === 'PENDING' || ref.status === 'UNDER_REVIEW') && (
