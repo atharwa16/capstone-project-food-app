@@ -944,9 +944,9 @@ export function AdminSystemMonitor() {
               <span className="w-3 h-3 rounded-full bg-emerald-500 animate-ping" />
               {server?.status || 'ONLINE'}
             </p>
-            <span className="text-xs font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded-md">Port {server?.port || 5000}</span>
+            <span className="text-xs font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded-md">Port {server?.port || 5001}</span>
           </div>
-          <p className="text-[11px] text-gray-500 font-medium">Listening on http://localhost:5000</p>
+          <p className="text-[11px] text-gray-500 font-medium">Listening on http://localhost:{server?.port || 5001}</p>
         </div>
 
         <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm space-y-1">

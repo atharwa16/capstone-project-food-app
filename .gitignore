@@ -42,6 +42,7 @@ ENV/
 *.pth
 *.h5
 *.onnx
+!ml_service/models/food_forensics_v1/**
 ml_service/models/*.pt
 ml_service/models/*.pth
 ml_service/models/*.h5

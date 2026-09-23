@@ -1,0 +1,83 @@
+{
+  "version": "1.0",
+  "backbone": "tf_efficientnetv2_s.in21k_ft_in1k",
+  "preprocessor": {
+    "long_side": 384,
+    "jpeg_quality": 90,
+    "subsampling": 2,
+    "img_size": 384,
+    "mean": [
+      0.48500001430511475,
+      0.4560000002384186,
+      0.4059999883174896
+    ],
+    "std": [
+      0.2290000021457672,
+      0.2240000069141388,
+      0.22499999403953552
+    ],
+    "letterbox_fill": [
+      114,
+      114,
+      114
+    ],
+    "ela_quality": 90,
+    "version": "1.0"
+  },
+  "calibrator": {
+    "temperature": 0.8514644351464435,
+    "bias": 0.4268322877209596,
+    "threshold": 0.4268322877209596,
+    "fitted": true
+  },
+  "review_low": 0.2,
+  "review_high": 0.95,
+  "calibration_error": {
+    "before": 0.0218,
+    "after": 0.0141
+  },
+  "metrics": {
+    "val": {
+      "accuracy": 0.8656842105263158,
+      "precision": 0.9058411214953271,
+      "recall": 0.8162105263157895,
+      "f1": 0.8586932447397564,
+      "tp": 3877,
+      "fp": 403,
+      "tn": 4347,
+      "fn": 873,
+      "auc": 0.935832997229917
+    },
+    "test": {
+      "accuracy": 0.8647083596546642,
+      "precision": 0.9050514499532273,
+      "recall": 0.8149084017687934,
+      "f1": 0.857617728531856,
+      "tp": 3870,
+      "fp": 406,
+      "tn": 4343,
+      "fn": 879,
+      "auc": 0.9373994396577201
+    },
+    "holdout_unseen_class": {
+      "accuracy": 0.9004901960784314,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "tp": 0,
+      "fp": 203,
+      "tn": 1837,
+      "fn": 0
+    },
+    "holdout_clean_real": {
+      "accuracy": 0.9017821782178218,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "tp": 0,
+      "fp": 496,
+      "tn": 4554,
+      "fn": 0
+    }
+  }
+}

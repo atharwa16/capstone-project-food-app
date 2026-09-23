@@ -31,7 +31,7 @@ app.add_middleware(
 )
 
 HISTORY_FILE = os.path.join(os.path.dirname(__file__), "ml_history.json")
-BITEHUB_API_URL = os.environ.get("BITEHUB_API_URL", "http://localhost:5000/api")
+BITEHUB_API_URL = os.environ.get("BITEHUB_API_URL", "http://localhost:5001/api")
 
 def load_history():
     if not os.path.exists(HISTORY_FILE):
@@ -189,7 +189,9 @@ async def api_login(request: Request, response: Response):
     password = body.get("password", "").strip()
 
     # Accept configured admin credentials
-    if (email == "mlexpert@ai-detector.org" or email == "admin@bitehub.com") and (password == "MLAdmin@2026" or password == "Admin@123"):
+    allowed_emails = {"mlexpert@ai-detector.org", "admin@bitehub.com", "admin@example.com"}
+    allowed_passwords = {"MLAdmin@2026", "Admin@123"}
+    if email in allowed_emails and password in allowed_passwords:
         response.set_cookie(key="ml_admin_session", value="authenticated_admin_token", max_age=86400, httponly=True)
         return {"success": True, "message": "Authenticated."}
     

@@ -36,7 +36,7 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     reloadOrders();
 
-    const socket = io('http://localhost:5000', { transports: ['websocket', 'polling'] });
+    const socket = io('http://localhost:5001', { transports: ['websocket', 'polling'] });
     socket.on('global_order_update', ({ orderId, status }: { orderId: string; status: OrderStatus }) => {
       setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status, updatedAt: new Date().toISOString() } : o));
     });

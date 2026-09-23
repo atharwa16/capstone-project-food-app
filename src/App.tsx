@@ -5,6 +5,7 @@ import { OrdersProvider } from '@/contexts/OrdersContext';
 import { RefundsProvider } from '@/contexts/RefundsContext';
 import { FavoritesProvider } from '@/contexts/FavoritesContext';
 import { ToastProvider } from '@/contexts/ToastContext';
+import { AIProvider } from '@/contexts/AIContext';
 import { MainLayout, AuthLayout, AdminLayout } from '@/layouts';
 import { ProtectedRoute, AdminRoute, GuestRoute } from '@/components/layout/ProtectedRoute';
 
@@ -22,6 +23,7 @@ import { RefundsPage, RefundDetailPage } from '@/pages/refunds/RefundsPage';
 import { RequestRefundPage } from '@/pages/refunds/RequestRefundPage';
 import { FavoritesPage } from '@/pages/favorites/FavoritesPage';
 import { ProfilePage } from '@/pages/profile/ProfilePage';
+import { AIAnalysisPage } from '@/pages/ai/AIAnalysisPage';
 import {
   AdminDashboard,
   AdminUsers,
@@ -51,45 +53,48 @@ export default function App() {
             <OrdersProvider>
               <RefundsProvider>
                 <FavoritesProvider>
-                  <Routes>
-                    {/* Main layout routes - protected so unauthenticated users see login first */}
-                    <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
-                      <Route index element={<HomePage />} />
-                      <Route path="/restaurants" element={<RestaurantsPage />} />
-                      <Route path="/search" element={<SearchPage />} />
-                      <Route path="/restaurant/:id" element={<RestaurantPage />} />
-                      <Route path="/cart" element={<CartPage />} />
+                  <AIProvider>
+                    <Routes>
+                      {/* Main layout routes - protected so unauthenticated users see login first */}
+                      <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
+                        <Route index element={<HomePage />} />
+                        <Route path="/restaurants" element={<RestaurantsPage />} />
+                        <Route path="/search" element={<SearchPage />} />
+                        <Route path="/restaurant/:id" element={<RestaurantPage />} />
+                        <Route path="/cart" element={<CartPage />} />
+                        <Route path="/ai" element={<AIAnalysisPage />} />
 
-                      {/* Protected user routes */}
-                      <Route path="/checkout" element={<CheckoutPage />} />
-                      <Route path="/order-confirmation/:id" element={<OrderConfirmationPage />} />
-                      <Route path="/order-tracking/:id" element={<OrderTrackingPage />} />
-                      <Route path="/orders" element={<OrdersPage />} />
-                      <Route path="/refunds" element={<RefundsPage />} />
-                      <Route path="/refunds/:refundId" element={<RefundDetailPage />} />
-                      <Route path="/request-refund/:orderId" element={<RequestRefundPage />} />
-                      <Route path="/favorites" element={<FavoritesPage />} />
-                      <Route path="/profile" element={<ProfilePage />} />
+                        {/* Protected user routes */}
+                        <Route path="/checkout" element={<CheckoutPage />} />
+                        <Route path="/order-confirmation/:id" element={<OrderConfirmationPage />} />
+                        <Route path="/order-tracking/:id" element={<OrderTrackingPage />} />
+                        <Route path="/orders" element={<OrdersPage />} />
+                        <Route path="/refunds" element={<RefundsPage />} />
+                        <Route path="/refunds/:refundId" element={<RefundDetailPage />} />
+                        <Route path="/request-refund/:orderId" element={<RequestRefundPage />} />
+                        <Route path="/favorites" element={<FavoritesPage />} />
+                        <Route path="/profile" element={<ProfilePage />} />
 
-                      <Route path="*" element={<NotFoundPage />} />
-                    </Route>
+                        <Route path="*" element={<NotFoundPage />} />
+                      </Route>
 
-                    {/* Auth routes (guest only) */}
-                    <Route element={<AuthLayout />}>
-                      <Route path="/login" element={<GuestRoute><LoginPage /></GuestRoute>} />
-                      <Route path="/signup" element={<GuestRoute><SignupPage /></GuestRoute>} />
-                    </Route>
+                      {/* Auth routes (guest only) */}
+                      <Route element={<AuthLayout />}>
+                        <Route path="/login" element={<GuestRoute><LoginPage /></GuestRoute>} />
+                        <Route path="/signup" element={<GuestRoute><SignupPage /></GuestRoute>} />
+                      </Route>
 
-                    {/* Admin routes */}
-                    <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
-                      <Route index element={<AdminDashboard />} />
-                      <Route path="system-monitor" element={<AdminSystemMonitor />} />
-                      <Route path="users" element={<AdminUsers />} />
-                      <Route path="restaurants" element={<AdminRestaurants />} />
-                      <Route path="orders" element={<AdminOrders />} />
-                      <Route path="refunds" element={<AdminRefunds />} />
-                    </Route>
-                  </Routes>
+                      {/* Admin routes */}
+                      <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
+                        <Route index element={<AdminDashboard />} />
+                        <Route path="system-monitor" element={<AdminSystemMonitor />} />
+                        <Route path="users" element={<AdminUsers />} />
+                        <Route path="restaurants" element={<AdminRestaurants />} />
+                        <Route path="orders" element={<AdminOrders />} />
+                        <Route path="refunds" element={<AdminRefunds />} />
+                      </Route>
+                    </Routes>
+                  </AIProvider>
                 </FavoritesProvider>
               </RefundsProvider>
             </OrdersProvider>

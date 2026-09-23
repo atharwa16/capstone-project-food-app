@@ -1,0 +1,51 @@
+{
+  "threshold": 0.4268322877209596,
+  "best_epoch": 5,
+  "backbone": "tf_efficientnetv2_s.in21k_ft_in1k",
+  "img_size": 384,
+  "history": [],
+  "results": {
+    "val": {
+      "accuracy": 0.8656842105263158,
+      "precision": 0.9058411214953271,
+      "recall": 0.8162105263157895,
+      "f1": 0.8586932447397564,
+      "tp": 3877,
+      "fp": 403,
+      "tn": 4347,
+      "fn": 873,
+      "auc": 0.935832997229917
+    },
+    "test": {
+      "accuracy": 0.8647083596546642,
+      "precision": 0.9050514499532273,
+      "recall": 0.8149084017687934,
+      "f1": 0.857617728531856,
+      "tp": 3870,
+      "fp": 406,
+      "tn": 4343,
+      "fn": 879,
+      "auc": 0.9373994396577201
+    },
+    "holdout_unseen_class": {
+      "accuracy": 0.9004901960784314,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "tp": 0,
+      "fp": 203,
+      "tn": 1837,
+      "fn": 0
+    },
+    "holdout_clean_real": {
+      "accuracy": 0.9017821782178218,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "tp": 0,
+      "fp": 496,
+      "tn": 4554,
+      "fn": 0
+    }
+  }
+}

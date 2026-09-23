@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Search, ShoppingCart, MapPin, ChevronDown, User, LogOut, Package, Heart, UtensilsCrossed, Menu, X, ShieldAlert } from 'lucide-react';
+import { Search, ShoppingCart, MapPin, ChevronDown, User, LogOut, Package, Heart, UtensilsCrossed, Menu, X, ShieldAlert, Sparkles } from 'lucide-react';
 import clsx from 'clsx';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
@@ -115,6 +115,17 @@ export function Header() {
 
           {/* Right section: Cart, Auth */}
           <div className="flex items-center gap-3">
+            {/* AI Nutrition Scanner */}
+            <Link
+              to="/ai"
+              id="ai-scanner-btn"
+              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 transition-all shadow-2xs"
+              title="AI Food & Nutrition Scanner"
+            >
+              <Sparkles size={14} className="text-indigo-600 animate-pulse" />
+              <span>AI Scanner</span>
+            </Link>
+
             {/* Admin Quick Link - visible ONLY to Admin users */}
             {isAuthenticated && user?.role === 'ADMIN' && (
               <Link
@@ -163,11 +174,26 @@ export function Header() {
                       <p className="text-xs text-gray-500 truncate">{user.email}</p>
                     </div>
                     {user.role === 'ADMIN' && (
-                      <Link to="/admin" onClick={() => setShowUserMenu(false)} className="flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-amber-600 hover:bg-amber-50 transition-colors border-b border-gray-100">
-                        <ShieldAlert size={15} />
-                        Admin Panel
-                      </Link>
+                      <>
+                        <Link to="/admin" onClick={() => setShowUserMenu(false)} className="flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-amber-600 hover:bg-amber-50 transition-colors border-b border-gray-100">
+                          <ShieldAlert size={15} />
+                          Admin Panel
+                        </Link>
+                        <a
+                          href="http://localhost:8000/login"
+                          target="_blank"
+                          rel="noreferrer"
+                          onClick={() => setShowUserMenu(false)}
+                          className="flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-indigo-600 hover:bg-indigo-50 transition-colors border-b border-gray-100"
+                        >
+                          <ShieldAlert size={15} />
+                          ML Audit Console (Port 8000) ↗
+                        </a>
+                      </>
                     )}
+                    <Link to="/ai" onClick={() => setShowUserMenu(false)} className="flex items-center gap-2.5 px-4 py-2 text-sm text-indigo-600 font-medium hover:bg-indigo-50 transition-colors">
+                      <Sparkles size={15} className="text-indigo-500" />AI Food Scanner
+                    </Link>
                     <Link to="/profile" onClick={() => setShowUserMenu(false)} className="flex items-center gap-2.5 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
                       <User size={15} className="text-gray-400" />Profile Settings
                     </Link>

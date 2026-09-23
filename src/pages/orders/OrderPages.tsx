@@ -122,7 +122,7 @@ export function OrderTrackingPage() {
     if (!order) return;
 
     // Connect to WebSockets server
-    const socket = io('http://localhost:5000', { transports: ['websocket', 'polling'] });
+    const socket = io('http://localhost:5001', { transports: ['websocket', 'polling'] });
 
     socket.on('connect', () => {
       setWsConnected(true);
