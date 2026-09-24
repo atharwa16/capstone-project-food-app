@@ -222,27 +222,33 @@ def get_dashboard(request: Request):
     rows_html = ""
     for r in records:
         pred = r.get("prediction", {})
-        is_real = pred.get("is_authentic", True)
+        label = pred.get("label", "REAL")
         confidence = pred.get("confidence_score", 0.0)
-        pct = int(confidence * 100) if confidence else 0
+        p_manip = pred.get("manipulation_probability")
+        if p_manip is None:
+            p_manip = (1.0 - confidence) if label == "REAL" else confidence
+        ai_score_pct = round(p_manip * 100, 1)
         img_url = r.get("image")
 
-        tb = pred.get("texture_breakdown", {})
-        organic_entropy = tb.get("organic_entropy", "Standard")
-        diffusion_noise = tb.get("diffusion_noise", "None")
-
-        if is_real:
+        if label == "REAL":
             badge_html = f"""
             <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-emerald-950/40 text-emerald-300 border border-emerald-800/50">
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-              Authentic ({pct}%)
+              Real Food (AI: {ai_score_pct}%)
+            </span>
+            """
+        elif label == "UNCERTAIN":
+            badge_html = f"""
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-amber-950/40 text-amber-300 border border-amber-800/50">
+              <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+              Uncertain (AI: {ai_score_pct}%)
             </span>
             """
         else:
             badge_html = f"""
             <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-rose-950/40 text-rose-300 border border-rose-800/50">
               <span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span>
-              Synthetic / Flagged ({pct}%)
+              AI-Edited / Fake ({ai_score_pct}%)
             </span>
             """
 

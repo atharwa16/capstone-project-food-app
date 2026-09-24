@@ -157,12 +157,13 @@ def predict_image_authenticity(image_data: str | None = None) -> dict:
             }
 
             return {
-                "is_authentic":      is_authentic,
-                "label":             label,
-                "confidence_score":  round(confidence, 4),
-                "inference_time_ms": time_ms,
-                "reason":            reason,
-                "texture_breakdown": texture_breakdown,
+                "is_authentic":              is_authentic,
+                "label":                     label,
+                "confidence_score":          round(confidence, 4),
+                "manipulation_probability":  round(p_manip, 4),
+                "inference_time_ms":         time_ms,
+                "reason":                    reason,
+                "texture_breakdown":         texture_breakdown,
             }
 
         except Exception as exc:

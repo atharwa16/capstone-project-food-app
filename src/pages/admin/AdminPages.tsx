@@ -818,22 +818,21 @@ export function AdminRefunds() {
                         <span className="text-xs font-black uppercase tracking-wider">
                           AI Model Verdict: {ref.mlVerdict === 'REAL' ? 'Authentic Photo (Real Food)' : ref.mlVerdict === 'AI_GENERATED' || ref.mlVerdict === 'MANIPULATED' ? 'Flagged / Tampered Media' : 'Uncertain (Audit Needed)'}
                         </span>
-                        {ref.mlConfidence != null && (
-                          <span className={`text-[11px] font-extrabold px-2 py-0.5 rounded-md ${
+                        {ref.mlManipulationProb ? (
+                          <span className={`text-[11px] font-extrabold px-2.5 py-0.5 rounded-md ${
                             ref.mlVerdict === 'REAL' 
-                              ? 'bg-emerald-200/80 text-emerald-900' 
+                              ? 'bg-emerald-200/80 text-emerald-950 border border-emerald-300/80' 
                               : ref.mlVerdict === 'AI_GENERATED' || ref.mlVerdict === 'MANIPULATED'
-                              ? 'bg-rose-200/80 text-rose-900' 
-                              : 'bg-amber-200/80 text-amber-900'
+                              ? 'bg-rose-200/80 text-rose-950 border border-rose-300/80' 
+                              : 'bg-amber-200/80 text-amber-950 border border-amber-300/80'
                           }`}>
-                            {(ref.mlConfidence * 100).toFixed(1)}% Confidence
+                            AI Manipulation Risk: {ref.mlManipulationProb}
                           </span>
-                        )}
-                        {ref.mlManipulationProb && (
-                          <span className="text-[11px] font-mono text-gray-500 hidden sm:inline">
-                            (Manipulation: {ref.mlManipulationProb})
+                        ) : ref.mlConfidence != null ? (
+                          <span className="text-[11px] font-extrabold px-2 py-0.5 rounded-md bg-gray-100 text-gray-800">
+                            Confidence: {(ref.mlConfidence * 100).toFixed(1)}%
                           </span>
-                        )}
+                        ) : null}
                       </div>
                       <p className="text-[11px] font-medium text-gray-600 mt-1 line-clamp-2">
                         {ref.mlReason || 'EfficientNetV2-S ONNX model processed this evidence against synthetic artifacts and photo tamper signatures.'}
