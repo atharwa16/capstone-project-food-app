@@ -230,6 +230,9 @@ def get_dashboard(request: Request):
         ai_score_pct = round(p_manip * 100, 1)
         img_url = r.get("image")
 
+        tb = pred.get("texture_breakdown", {})
+        manip_str = tb.get("manipulation_probability", f"{ai_score_pct}%")
+
         if label == "REAL":
             badge_html = f"""
             <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-emerald-950/40 text-emerald-300 border border-emerald-800/50">
@@ -289,8 +292,8 @@ def get_dashboard(request: Request):
           <td class="px-5 py-3.5">
             {badge_html}
             <div class="mt-1 text-[11px] text-slate-400 space-y-0.5">
-              <div><span class="text-slate-500">Entropy:</span> {organic_entropy}</div>
-              <div><span class="text-slate-500">Noise:</span> {diffusion_noise}</div>
+              <div><span class="text-slate-500">AI Score:</span> {manip_str}</div>
+              <div><span class="text-slate-500">Verdict:</span> <span class="font-mono text-slate-300">{label}</span></div>
             </div>
           </td>
           <td class="px-5 py-3.5 whitespace-nowrap">
