@@ -56,6 +56,198 @@ app.use((req, res, next) => {
   next();
 });
 
+// Root Landing & Status Page
+app.get(['/', '/api'], (req, res) => {
+  if (req.headers.accept && req.headers.accept.includes('application/json')) {
+    return res.json({
+      name: 'BiteHub Backend API & WebSockets Server',
+      status: 'ONLINE',
+      port: PORT,
+      timestamp: new Date().toISOString(),
+      webAppUrl: 'http://localhost:5173',
+      mlServiceUrl: 'http://localhost:8000/login',
+      endpoints: {
+        health: '/api/health',
+        systemStatus: '/api/admin/system-status',
+        restaurants: '/api/restaurants',
+        orders: '/api/orders',
+        refunds: '/api/refunds',
+        auth: '/api/auth'
+      }
+    });
+  }
+
+  res.send(`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>BiteHub Backend API (Port 5001)</title>
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+      <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; }
+        body {
+          min-height: 100vh;
+          background: radial-gradient(circle at 10% 20%, #0f172a 0%, #020617 100%);
+          color: #f8fafc;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 24px;
+        }
+        .card {
+          width: 100%;
+          max-width: 680px;
+          background: rgba(30, 41, 59, 0.7);
+          backdrop-filter: blur(16px);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 20px;
+          padding: 36px;
+          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        .header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 24px;
+        }
+        .badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          background: rgba(34, 197, 94, 0.15);
+          color: #4ade80;
+          border: 1px solid rgba(34, 197, 94, 0.3);
+          padding: 6px 14px;
+          border-radius: 9999px;
+          font-size: 13px;
+          font-weight: 600;
+        }
+        .badge-dot {
+          width: 8px;
+          height: 8px;
+          background: #22c55e;
+          border-radius: 50%;
+          box-shadow: 0 0 10px #22c55e;
+          animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.85); } }
+        h1 { font-size: 26px; font-weight: 800; letter-spacing: -0.02em; color: #fff; margin-bottom: 6px; }
+        p.subtitle { color: #94a3b8; font-size: 14px; line-height: 1.5; margin-bottom: 24px; }
+        .grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+          gap: 14px;
+          margin-bottom: 24px;
+        }
+        .metric-box {
+          background: rgba(15, 23, 42, 0.6);
+          border: 1px solid rgba(255, 255, 255, 0.06);
+          border-radius: 12px;
+          padding: 16px;
+        }
+        .metric-label { font-size: 12px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+        .metric-val { font-size: 16px; font-weight: 700; color: #e2e8f0; margin-top: 4px; }
+        .actions {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+        .btn {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 14px 20px;
+          border-radius: 12px;
+          text-decoration: none;
+          font-weight: 600;
+          font-size: 14px;
+          transition: all 0.2s ease;
+        }
+        .btn-primary {
+          background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+          color: white;
+          box-shadow: 0 10px 20px -5px rgba(249, 115, 22, 0.4);
+        }
+        .btn-primary:hover {
+          opacity: 0.95;
+          transform: translateY(-1px);
+        }
+        .btn-secondary {
+          background: rgba(255, 255, 255, 0.06);
+          color: #e2e8f0;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .btn-secondary:hover {
+          background: rgba(255, 255, 255, 0.12);
+        }
+        .footer-note {
+          margin-top: 20px;
+          text-align: center;
+          font-size: 12px;
+          color: #64748b;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="card">
+        <div class="header">
+          <div>
+            <h1>🍕 BiteHub Server</h1>
+            <p style="color: #cbd5e1; font-size: 13px; margin-top: 2px;">REST API & WebSocket Gateway</p>
+          </div>
+          <div class="badge">
+            <span class="badge-dot"></span>
+            PORT 5001 ACTIVE
+          </div>
+        </div>
+
+        <p class="subtitle">
+          The BiteHub backend server is running smoothly on port 5001. If you are looking for the customer-facing web application, click the button below to open the frontend on port 5173.
+        </p>
+
+        <div class="grid">
+          <div class="metric-box">
+            <div class="metric-label">Database</div>
+            <div class="metric-val">SQLite 3 (Ready)</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">WebSockets</div>
+            <div class="metric-val">Socket.io (Live Tracking)</div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <a href="http://localhost:5173" class="btn btn-primary" target="_blank">
+            <span>🚀 Open Web App UI (Port 5173)</span>
+            <span>&rarr;</span>
+          </a>
+          <a href="/api/health" class="btn btn-secondary">
+            <span>🩺 View Health Check JSON (/api/health)</span>
+            <span>&rarr;</span>
+          </a>
+          <a href="/api/admin/system-status" class="btn btn-secondary">
+            <span>📊 View Telemetry & DB Status</span>
+            <span>&rarr;</span>
+          </a>
+          <a href="http://localhost:8000/login" class="btn btn-secondary" target="_blank">
+            <span>🧠 Open Python ML Inspection Microservice (Port 8000)</span>
+            <span>&rarr;</span>
+          </a>
+        </div>
+
+        <div class="footer-note">
+          BiteHub Microservices Architecture &bull; Node.js v20 &bull; Express 5
+        </div>
+      </div>
+    </body>
+    </html>
+  `);
+});
+
 // Healthcheck
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', serverTime: new Date().toISOString(), service: 'BiteHub Backend API & WebSockets' });
