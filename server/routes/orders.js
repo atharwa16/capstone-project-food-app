@@ -6,6 +6,17 @@ import { emitOrderStatusChange } from '../sockets/orderSocket.js';
 
 const router = express.Router();
 
+// Safely parse a JSON string; returns fallback if already an object or malformed
+function safeParse(value, fallback) {
+  if (value === null || value === undefined) return fallback;
+  if (typeof value === 'object') return value; // already parsed
+  try {
+    return JSON.parse(value);
+  } catch {
+    return fallback;
+  }
+}
+
 // Seed initial orders if DB table is empty
 async function seedOrdersIfEmpty() {
   const countRow = await getOne('SELECT COUNT(*) as count FROM orders');
@@ -35,13 +46,13 @@ function formatOrder(row) {
     userId: row.user_id,
     restaurantId: row.restaurant_id,
     restaurantName: row.restaurant_name,
-    items: JSON.parse(row.items || '[]'),
+    items: safeParse(row.items, []),
     subtotal: row.subtotal,
     deliveryFee: row.delivery_fee,
     tax: row.tax,
     discount: row.discount,
     total: row.total,
-    address: JSON.parse(row.address || '{}'),
+    address: safeParse(row.address, {}),
     paymentMethod: row.payment_method,
     status: row.status,
     createdAt: row.created_at,
