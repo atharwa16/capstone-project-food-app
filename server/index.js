@@ -91,8 +91,8 @@ app.get(['/', '/api'], (req, res) => {
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; }
         body {
           min-height: 100vh;
-          background: radial-gradient(circle at 10% 20%, #0f172a 0%, #020617 100%);
-          color: #f8fafc;
+          background: radial-gradient(circle at 10% 20%, #f1f5f9 0%, #e2e8f0 100%);
+          color: #0f172a;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -101,12 +101,12 @@ app.get(['/', '/api'], (req, res) => {
         .card {
           width: 100%;
           max-width: 680px;
-          background: rgba(30, 41, 59, 0.7);
+          background: rgba(255, 255, 255, 0.95);
           backdrop-filter: blur(16px);
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          border: 1px solid rgba(203, 213, 225, 0.8);
           border-radius: 20px;
           padding: 36px;
-          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+          box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.08), 0 0 1px 1px rgba(15, 23, 42, 0.03);
         }
         .header {
           display: flex;
@@ -118,25 +118,25 @@ app.get(['/', '/api'], (req, res) => {
           display: inline-flex;
           align-items: center;
           gap: 8px;
-          background: rgba(34, 197, 94, 0.15);
-          color: #4ade80;
-          border: 1px solid rgba(34, 197, 94, 0.3);
+          background: #ecfdf5;
+          color: #059669;
+          border: 1px solid #a7f3d0;
           padding: 6px 14px;
           border-radius: 9999px;
           font-size: 13px;
-          font-weight: 600;
+          font-weight: 700;
         }
         .badge-dot {
           width: 8px;
           height: 8px;
-          background: #22c55e;
+          background: #10b981;
           border-radius: 50%;
-          box-shadow: 0 0 10px #22c55e;
+          box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
           animation: pulse 2s infinite;
         }
         @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.85); } }
-        h1 { font-size: 26px; font-weight: 800; letter-spacing: -0.02em; color: #fff; margin-bottom: 6px; }
-        p.subtitle { color: #94a3b8; font-size: 14px; line-height: 1.5; margin-bottom: 24px; }
+        h1 { font-size: 26px; font-weight: 800; letter-spacing: -0.02em; color: #0f172a; margin-bottom: 6px; }
+        p.subtitle { color: #475569; font-size: 14px; line-height: 1.6; margin-bottom: 24px; }
         .grid {
           display: grid;
           grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -144,13 +144,13 @@ app.get(['/', '/api'], (req, res) => {
           margin-bottom: 24px;
         }
         .metric-box {
-          background: rgba(15, 23, 42, 0.6);
-          border: 1px solid rgba(255, 255, 255, 0.06);
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
           border-radius: 12px;
           padding: 16px;
         }
-        .metric-label { font-size: 12px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
-        .metric-val { font-size: 16px; font-weight: 700; color: #e2e8f0; margin-top: 4px; }
+        .metric-label { font-size: 11px; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
+        .metric-val { font-size: 15px; font-weight: 700; color: #0f172a; margin-top: 4px; }
         .actions {
           display: flex;
           flex-direction: column;
@@ -169,26 +169,30 @@ app.get(['/', '/api'], (req, res) => {
         }
         .btn-primary {
           background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-          color: white;
-          box-shadow: 0 10px 20px -5px rgba(249, 115, 22, 0.4);
+          color: #ffffff;
+          box-shadow: 0 10px 20px -5px rgba(249, 115, 22, 0.35);
         }
         .btn-primary:hover {
           opacity: 0.95;
           transform: translateY(-1px);
+          box-shadow: 0 12px 24px -5px rgba(249, 115, 22, 0.45);
         }
         .btn-secondary {
-          background: rgba(255, 255, 255, 0.06);
-          color: #e2e8f0;
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          background: #f8fafc;
+          color: #1e293b;
+          border: 1px solid #cbd5e1;
         }
         .btn-secondary:hover {
-          background: rgba(255, 255, 255, 0.12);
+          background: #f1f5f9;
+          color: #0f172a;
+          border-color: #94a3b8;
+          transform: translateY(-1px);
         }
         .footer-note {
-          margin-top: 20px;
+          margin-top: 24px;
           text-align: center;
           font-size: 12px;
-          color: #64748b;
+          color: #94a3b8;
         }
       </style>
     </head>
@@ -197,7 +201,7 @@ app.get(['/', '/api'], (req, res) => {
         <div class="header">
           <div>
             <h1>🍕 BiteHub Server</h1>
-            <p style="color: #cbd5e1; font-size: 13px; margin-top: 2px;">REST API & WebSocket Gateway</p>
+            <p style="color: #64748b; font-size: 13px; font-weight: 500; margin-top: 2px;">REST API & WebSocket Gateway</p>
           </div>
           <div class="badge">
             <span class="badge-dot"></span>
